@@ -1,0 +1,27 @@
+# CloudNativePG operator — base values
+# Reference: https://cloudnative-pg.io/
+# The operator is cluster-scoped and runs in its own namespace.
+# Individual Postgres Cluster CRs are defined by consuming applications
+# in their own namespaces (e.g. conecta-life's `infra/postgres/`).
+
+replicaCount: 1
+
+# Watch all namespaces so any app can create a CNPG Cluster.
+config:
+  clusterWide: true
+
+monitoring:
+  podMonitorEnabled: true
+  grafanaDashboard:
+    create: true
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+
+serviceAccount:
+  create: true
