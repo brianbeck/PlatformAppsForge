@@ -15,7 +15,7 @@ PlatformForge provides cluster infrastructure (ingress, observability, policy, s
 ## What's not here (yet)
 
 - **Keycloak** — currently deployed by DevExForge at `keycloak-{env}.brianbeck.net`. A future task promotes it to a shared service here.
-- **Vault / OpenBao** — scheduled before Conecta.life handles real patient data. Will host transit encryption keys and dynamic DB credentials.
+- **Vault / OpenBao** — scheduled before vivavida.life handles real patient data. Will host transit encryption keys and dynamic DB credentials.
 - **External Secrets Operator** — already an optional service in PlatformForge; enable it from there rather than deploying a second copy here.
 
 ## Layout
