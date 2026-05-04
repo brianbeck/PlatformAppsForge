@@ -1,0 +1,48 @@
+# Shared Keycloak instance (server + DB + ingress) — wave 15, after the
+# Keycloak Operator (wave 12) and CNPG operator (wave 5). The instance
+# itself depends on both being ready, plus a `keycloak-db-credentials`
+# SealedSecret in the `keycloak` namespace.
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: keycloak
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: "stage"
+            project: "default"
+  template:
+    metadata:
+      name: "keycloak-{{env}}"
+      namespace: argocd
+      labels:
+        app.kubernetes.io/part-of: platformappsforge
+        platformappsforge/service: keycloak
+      annotations:
+        argocd.argoproj.io/sync-wave: "15"
+        notifications.argoproj.io/subscribe.on-health-degraded: ""
+        notifications.argoproj.io/subscribe.on-sync-failed: ""
+    spec:
+      project: "{{project}}"
+      source:
+        repoURL: https://github.com/brianbeck/PlatformAppsForge.git
+        targetRevision: main
+        path: platform/keycloak/overlays/{{env}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: keycloak
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ServerSideApply=true
+        retry:
+          limit: 5
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 5m

@@ -1,0 +1,77 @@
+# Keycloak server instance, managed by the Keycloak Operator.
+# - DB: CloudNativePG cluster `keycloak-db` (see db-cluster.yaml)
+# - HTTP only inside the cluster; TLS terminated at Traefik (cert-manager)
+#   in stage and at the Caddy reverse proxy upstream in prod.
+# - Hostname is configurable per env via the operator's `spec.hostname`.
+#   Stage default: keycloak-stage.brianbeck.net.
+#
+# Realm config does NOT live in this CR — each consuming app owns its realm
+# via a separate KeycloakRealmImport CR in the app's deploy repo:
+#   - DevExForge-deploy/environments/<env>/realms/teams.yaml
+#   - conecta-life-deploy/environments/<env>/realms/conecta.yaml
+---
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+  labels:
+    app.kubernetes.io/part-of: platformappsforge
+    platformappsforge/service: keycloak
+spec:
+  instances: 1   # stage; prod overlay raises to 2+
+
+  image: quay.io/keycloak/keycloak:26.0.5
+
+  db:
+    vendor: postgres
+    host: keycloak-db-rw.keycloak.svc.cluster.local
+    port: 5432
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db-credentials
+      key: username
+    passwordSecret:
+      name: keycloak-db-credentials
+      key: password
+
+  hostname:
+    # Public-facing hostname Keycloak emits in OIDC discovery + redirects.
+    hostname: keycloak-stage.brianbeck.net
+    strict: false   # allow LAN access via the same hostname AND in-cluster service URL
+
+  http:
+    httpEnabled: true   # Traefik (stage) / Caddy (prod) terminates TLS upstream
+
+  ingress:
+    # Disable the operator's default Ingress; we author our own (Traefik
+    # annotations + cert-manager) in ingress.yaml.
+    enabled: false
+
+  # Mount client-secret env vars from the keycloak-client-secrets SealedSecret.
+  # Consumed by KeycloakRealmImport CRs via ${env:VAR} substitution in their
+  # realm JSON, so client secret values stay out of the CRs themselves.
+  additionalOptions:
+    - name: KC_LOG_LEVEL
+      value: INFO
+
+  # Pod-level env additions (the operator surfaces these as container env).
+  # Each consuming app's client-secret env var is added here as the realm
+  # CR is added (currently empty; populated when realms come online).
+  unsupported:
+    podTemplate:
+      spec:
+        containers:
+          - name: keycloak
+            envFrom:
+              - secretRef:
+                  name: keycloak-client-secrets
+                  optional: true   # OK to be missing until realms arrive
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 768Mi
+    limits:
+      cpu: 1000m
+      memory: 1500Mi

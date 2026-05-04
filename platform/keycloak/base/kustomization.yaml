@@ -1,0 +1,10 @@
+# Base set of resources for the shared Keycloak instance. Argo CD points at
+# this directory (with a per-env overlay path applied as needed once env-
+# specific patches arrive).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - db-cluster.yaml
+  - instance.yaml
+  - ingress.yaml

@@ -1,0 +1,43 @@
+# CloudNativePG Cluster for the shared Keycloak's database.
+# Operator install lives in ../cloudnative-pg/. Sync wave 14 (between operator
+# and Keycloak instance) so the DB is ready before Keycloak boots.
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keycloak-db
+  namespace: keycloak
+  labels:
+    app.kubernetes.io/part-of: platformappsforge
+    platformappsforge/service: keycloak
+spec:
+  instances: 1   # stage default; overlaid to 3 in prod
+
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.4
+
+  storage:
+    size: 5Gi
+
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: "256MB"
+      work_mem: "8MB"
+
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak
+      secret:
+        name: keycloak-db-credentials   # SealedSecret authored per-cluster
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi
+
+  monitoring:
+    enablePodMonitor: true

@@ -1,0 +1,34 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - secrets
+
+# Prod overlay — applied when the prod migration plan ships. Patches:
+#   - Bump Keycloak instances to 2+ for HA
+#   - Switch Ingress to `web` entrypoint (Caddy terminates TLS upstream)
+#   - Update hostname to auth.vivavida.life
+#   - Drop the cert-manager Certificate (Caddy issues the cert)
+#
+# Patches (kept commented until prod plan):
+# patches:
+#   - target: { kind: Keycloak, name: keycloak }
+#     patch: |-
+#       - op: replace
+#         path: /spec/instances
+#         value: 2
+#       - op: replace
+#         path: /spec/hostname/hostname
+#         value: auth.vivavida.life
+#   - target: { kind: Ingress, name: keycloak }
+#     patch: |-
+#       - op: replace
+#         path: /metadata/annotations
+#         value:
+#           traefik.ingress.kubernetes.io/router.entrypoints: web
+#       - op: remove
+#         path: /spec/tls
+#       - op: replace
+#         path: /spec/rules/0/host
+#         value: auth.vivavida.life
