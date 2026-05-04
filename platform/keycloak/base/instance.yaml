@@ -22,6 +22,14 @@ spec:
   instances: 1   # stage; prod overlay raises to 2+
 
   image: quay.io/keycloak/keycloak:26.0.5
+  # The stock Keycloak image isn't pre-built with our build-time options
+  # (kc.db=postgres, kc.health-enabled=true). Tell the operator to run
+  # `kc.sh build` before starting so those options take effect. For prod
+  # we should bake a custom image with these options pre-built and flip
+  # this back to true for faster startup. Without this flag the operator
+  # launches with --optimized and the pod CrashLoops because health
+  # probes hit port 9000 which is never opened.
+  startOptimized: false
 
   db:
     vendor: postgres
