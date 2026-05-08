@@ -19,10 +19,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - keycloak-stage.brianbeck.net   # overlaid per env
+        - auth-stage.vivavida.life   # overlaid per env
       secretName: keycloak-tls
   rules:
-    - host: keycloak-stage.brianbeck.net
+    - host: auth-stage.vivavida.life
       http:
         paths:
           - path: /

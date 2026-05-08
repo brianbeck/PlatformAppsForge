@@ -3,7 +3,7 @@
 # - HTTP only inside the cluster; TLS terminated at Traefik (cert-manager)
 #   in stage and at the Caddy reverse proxy upstream in prod.
 # - Hostname is configurable per env via the operator's `spec.hostname`.
-#   Stage default: keycloak-stage.brianbeck.net.
+#   Stage default: auth-stage.vivavida.life.
 #
 # Realm config does NOT live in this CR — each consuming app owns its realm
 # via a separate KeycloakRealmImport CR in the app's deploy repo:
@@ -45,7 +45,7 @@ spec:
 
   hostname:
     # Public-facing hostname Keycloak emits in OIDC discovery + redirects.
-    hostname: keycloak-stage.brianbeck.net
+    hostname: auth-stage.vivavida.life
     strict: false   # allow LAN access via the same hostname AND in-cluster service URL
 
   http:
@@ -62,6 +62,11 @@ spec:
   additionalOptions:
     - name: KC_LOG_LEVEL
       value: INFO
+    # Honor X-Forwarded-Proto from Traefik (stage) / Caddy (prod) so that
+    # OIDC discovery + redirects emit https URLs even though the upstream
+    # connection to Keycloak is plain http.
+    - name: KC_PROXY_HEADERS
+      value: xforwarded
 
   # Pod-level env additions (the operator surfaces these as container env).
   # Each consuming app's client-secret env var is added here as the realm

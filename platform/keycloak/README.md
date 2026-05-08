@@ -8,7 +8,7 @@ The shared Keycloak instance for the cluster. Operator-managed (Quay's official 
 |---|---|
 | `db-cluster.yaml` | CloudNativePG `Cluster` named `keycloak-db` (database for Keycloak) |
 | `instance.yaml` | `Keycloak` CR — server config, hostname, DB ref, image pin |
-| `ingress.yaml` | Traefik `Ingress` with cert-manager TLS for `keycloak-stage.brianbeck.net` |
+| `ingress.yaml` | Traefik `Ingress` with cert-manager TLS for `auth-stage.vivavida.life` |
 | `kustomization.yaml` | Base aggregator |
 | `overlays/{stage,prod}/kustomization.yaml` | Per-env patches (prod patches commented until prod migration) |
 

@@ -7,6 +7,6 @@ resources:
   # Authored by the user via kubeseal — see ../../README.md.
   - secrets
 
-# Stage overlay — base hostname is already keycloak-stage.brianbeck.net
+# Stage overlay — base hostname is already auth-stage.vivavida.life
 # and instance count is 1, so no patches needed today. Reserved for future
 # stage-specific tweaks.
