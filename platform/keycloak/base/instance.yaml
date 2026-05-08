@@ -59,13 +59,17 @@ spec:
   # Mount client-secret env vars from the keycloak-client-secrets SealedSecret.
   # Consumed by KeycloakRealmImport CRs via ${env:VAR} substitution in their
   # realm JSON, so client secret values stay out of the CRs themselves.
+  # additionalOptions takes the un-prefixed Keycloak CLI option name
+  # (dash-case). The operator prepends `KC_` and uppercases when it
+  # builds container env, so writing `KC_PROXY_HEADERS` here would
+  # produce `KC_KC_PROXY_HEADERS` and be silently ignored.
   additionalOptions:
-    - name: KC_LOG_LEVEL
+    - name: log-level
       value: INFO
     # Honor X-Forwarded-Proto from Traefik (stage) / Caddy (prod) so that
     # OIDC discovery + redirects emit https URLs even though the upstream
     # connection to Keycloak is plain http.
-    - name: KC_PROXY_HEADERS
+    - name: proxy-headers
       value: xforwarded
 
   # Pod-level env additions (the operator surfaces these as container env).
