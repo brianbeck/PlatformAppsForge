@@ -1,0 +1,74 @@
+/*
+ * vivavida.life brand overrides for the Keycloak login page.
+ *
+ * Loaded after the stock keycloak login.css, so these rules win. Covers both
+ * the legacy PatternFly 3 (.btn-primary) and the newer PatternFly
+ * (.pf-c-button / .pf-v5-c-button) class names Keycloak emits across versions,
+ * so the brand survives a Keycloak upgrade.
+ *
+ * First-pass theme — colours, logo, and background are branded; fine visual
+ * tuning is best done against the live login page.
+ */
+
+:root {
+  --vv-primary: #1a6ebf;
+  --vv-primary-ink: #14538f;
+  --vv-ink: #16202c;
+}
+
+/* Page background — soft brand wash instead of the stock grey. */
+.login-pf body,
+body.login-pf {
+  background: linear-gradient(160deg, #eef4fb 0%, #f7f9fc 60%, #ffffff 100%);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Replace the realm-name header text with the vivavida wordmark. */
+#kc-header-wrapper {
+  font-size: 0; /* hide the realm display name text */
+  padding: 24px 0 8px;
+}
+#kc-header-wrapper::after {
+  content: "";
+  display: inline-block;
+  width: 168px;
+  height: 34px;
+  background: url(../img/logo.svg) no-repeat center / contain;
+}
+
+/* Login card — cleaner border + brand top accent. */
+.login-pf-page .card-pf {
+  border-top: 3px solid var(--vv-primary);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(20, 83, 143, 0.08);
+}
+
+/* Primary button — brand fill, both old and new PatternFly. */
+.login-pf .btn-primary,
+.pf-c-button.pf-m-primary,
+.pf-v5-c-button.pf-m-primary,
+input[type="submit"].pf-c-button.pf-m-primary {
+  background-color: var(--vv-primary);
+  border-color: var(--vv-primary);
+  color: #fff;
+}
+.login-pf .btn-primary:hover,
+.pf-c-button.pf-m-primary:hover,
+.pf-v5-c-button.pf-m-primary:hover {
+  background-color: var(--vv-primary-ink);
+  border-color: var(--vv-primary-ink);
+}
+
+/* Links (register, forgot password, etc.). */
+.login-pf a,
+#kc-content a {
+  color: var(--vv-primary);
+}
+
+/* Input focus ring in brand. */
+.login-pf input:focus,
+.pf-c-form-control:focus,
+.pf-v5-c-form-control:focus {
+  border-color: var(--vv-primary);
+  box-shadow: 0 0 0 1px var(--vv-primary);
+}
