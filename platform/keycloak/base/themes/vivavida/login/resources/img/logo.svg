@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 34" width="168" height="34" role="img" aria-label="vivavida.life">
+  <rect x="0" y="5" width="24" height="24" rx="7" fill="#1A6EBF"/>
+  <path d="M4 12.5l4 9 4-9M12 12.5l4 9 4-9" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="33" y="23" font-family="ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="700" letter-spacing="-0.4">
+    <tspan fill="#16202C">vivavida</tspan><tspan fill="#1A6EBF">.life</tspan>
+  </text>
+</svg>

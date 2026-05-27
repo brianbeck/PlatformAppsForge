@@ -8,3 +8,18 @@ resources:
   - db-cluster.yaml
   - instance.yaml
   - ingress.yaml
+
+# vivavida.life custom login theme, mounted into the Keycloak pod at
+# /opt/keycloak/themes/vivavida/login/ (see instance.yaml podTemplate). Stable
+# name (no hash suffix) so the CR's volume reference stays valid — theme updates
+# are picked up on the next pod roll.
+configMapGenerator:
+  - name: keycloak-theme-vivavida
+    namespace: keycloak
+    files:
+      - theme.properties=themes/vivavida/login/theme.properties
+      - vivavida.css=themes/vivavida/login/resources/css/vivavida.css
+      - logo.svg=themes/vivavida/login/resources/img/logo.svg
+
+generatorOptions:
+  disableNameSuffixHash: true

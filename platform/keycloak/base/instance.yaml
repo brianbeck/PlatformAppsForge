@@ -84,6 +84,25 @@ spec:
               - secretRef:
                   name: keycloak-client-secrets
                   optional: true   # OK to be missing until realms arrive
+            # vivavida.life login theme files, dropped into the theme dir via
+            # subPath (subPath lets a flat ConfigMap populate nested theme
+            # paths). Read once per pod start; a CR/ConfigMap change rolls the
+            # pod, which re-reads them. The conecta realm selects this theme
+            # via loginTheme: vivavida.
+            volumeMounts:
+              - name: vivavida-theme
+                mountPath: /opt/keycloak/themes/vivavida/login/theme.properties
+                subPath: theme.properties
+              - name: vivavida-theme
+                mountPath: /opt/keycloak/themes/vivavida/login/resources/css/vivavida.css
+                subPath: vivavida.css
+              - name: vivavida-theme
+                mountPath: /opt/keycloak/themes/vivavida/login/resources/img/logo.svg
+                subPath: logo.svg
+        volumes:
+          - name: vivavida-theme
+            configMap:
+              name: keycloak-theme-vivavida
 
   resources:
     requests:
